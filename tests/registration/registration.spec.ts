@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test'
-
-test('registration', async({page})=> {
+//parar que guarde imagenes en el reporte debo crear el testInfo
+test('registration', async({page}, testInfo)=> {
 await page.goto('http://127.0.0.1:5501/register.html')
 
 const name='Daiana'
@@ -22,9 +22,15 @@ await page.locator("id=monday").click() //selecciona directamente la opción de 
 // para selección de archivos
 await page.locator("id=picture").setInputFiles('images/image.png') 
 
+//para guardar la captura de pantalla en el reporte
+await testInfo.attach('register1',{
+    body: await page.screenshot(),
+    contentType: 'image/png'
+})
+
 //para guardar la captura de pantalla
 //entonces dice en la carpeta de screenshots guardame una captura de pantalla con este nombre y que sea de toda la página
-await page.screenshot({path:'screenshots/register1.png', fullPage:true}) //fullpage para que tome toda la página
+//await page.screenshot({path:'screenshots/register1.png', fullPage:true}) //fullpage para que tome toda la página
 //cada await es una promesa, o la promesa se rechaza o se acepta, entonces le digo que se ponga a escuchar el evento antes de hacer click y cuando eso suceda yo voy a almacenar el resultado acá
 
 
@@ -48,14 +54,31 @@ expect(currentName).toContain(name) //comparamos lo que obtenemos vs lo que envi
 expect(currentLastName).toContain(lastName)
 expect(currentAge).toContain(age)
 
-await summaryPage.screenshot({path:'screenshots/register2.png', fullPage:true})  //para sacar captura de pantalla de la nueva página
-
-
+await testInfo.attach('register2',{
+    body: await page.screenshot(),
+    contentType: 'image/png'
+})
+//await summaryPage.screenshot({path:'screenshots/register2.png', fullPage:true})  //para sacar captura de pantalla de la nueva página
 
 
 await page.pause()
+})
 
 
+//para probar que se ejecute 3 veces el test
+test('registration fail', async({page}, testInfo)=> {
+await page.goto('http://127.0.0.1:5501/register.html')
+
+const name='Daiana'
+const lastName='Ramírez'
+const age='10'
+const country='Colombia'
+const email='Dramirez@voyenbus.com'
+const sex='M'
+
+await page.locator("id=name").fill(name)
+//para obligar que falle el test
+expect(true).toEqual(false) //esto nunca va a ser cierto 
 
 
 
