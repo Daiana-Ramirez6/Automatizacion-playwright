@@ -1,5 +1,6 @@
 import {Locator, Page} from '@playwright/test' 
 import { time } from 'console'
+
 export class AddTransactionsPage {
 
     private readonly page: Page //para tener acceso a la pagina y esperar un tiempo 
@@ -8,7 +9,12 @@ export class AddTransactionsPage {
     private readonly transactionAmount: Locator
     private readonly transactionDescription: Locator
     private readonly saveTransactionButton: Locator
+
    
+    private actualDateRow:Locator
+    private actualAmountRow:Locator
+    private actualDescriptionRow:Locator
+
     constructor(page: Page){
         this.page = page
         this.addTransactionButton= page.locator("//button[contains(text(),\'Añadir transacción\')]")
@@ -38,4 +44,20 @@ export class AddTransactionsPage {
     await page.locator('id=amount').fill('500')
     await page.locator('id=description').fill('Description Testing')
     await page.locator('//button[contains(text(),\'Guardar\')]').click()*/
-}
+
+    async getActualAmount(row:string){
+        this.actualAmountRow= this.page.locator(`//tbody[@id='transactions-list']//tr[${row}]//td[2]`)
+        return await this.actualAmountRow.textContent() //retorna una promesa
+
+    }
+
+    async getActualDescription(row:string){
+        this.actualDescriptionRow= this.page.locator(`//tbody[@id='transactions-list']//tr[${row}]//td[3]`)
+        return await this.actualDescriptionRow.textContent() //retorna una promesa
+} 
+
+    async getActualDate(row:string){
+        this.actualDateRow= this.page.locator(`//tbody[@id='transactions-list']//tr[${row}]//td[1]`)
+        return await this.actualDateRow.textContent() //retorna una promesa       
+    }
+  }
